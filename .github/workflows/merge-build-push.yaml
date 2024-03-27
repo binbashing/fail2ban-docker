@@ -29,7 +29,35 @@ jobs:
         with:
           context: .
           file: ${{ matrix.config.dockerfile }}
-          push: true
+          push: false
           tags: |
-              binbashing/fail2ban:latest
+              binbashing/fail2ban:${{ github.sha }}
+          platforms: linux/amd64, linux/arm64/v8, linux/arm/v7, linux/i386
+        
+      - name: Check if image has changed
+        id: check_image
+        run: |
+          docker pull binbashing/fail2ban:latest
+          PULLED_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' binbashing/fail2ban:latest)
+          BUILT_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' binbashing/fail2ban:${{ github.sha }})
+          if [ "$PULLED_IMAGE_DIGEST" = "$BUILT_IMAGE_DIGEST" ]; then
+            echo "Image has not change."
+            echo "::set-output name=match::true"
+          else
+            echo "Image has changed."
+            echo "::set-output name=match::false"
+          fi
+
+      - name: Tag Docker image latest
+        if: steps.check_image.outputs.match == 'false'
+        run: docker tag binbashing/fail2ban:${{ github.sha }} binbashing/fail2ban:latest
+
+      - name: Build and push Docker image
+        if: steps.check_image.outputs.match == 'false'
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: binbashing/fail2ban:latest
           platforms: linux/amd64, linux/arm64/v8, linux/arm/v7, linux/i386
