@@ -10,53 +10,15 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    services:
-      registry:
-        image: registry:2
-        ports:
-          - 5000:5000
  
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        with:
-          driver-opts: network=host
   
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v5
-        env:
-          DOCKER_BUILDKIT: 0
-        with:
-          context: .
-          file: ${{ matrix.config.dockerfile }}
-          push: true
-          tags: |
-              localhost:5000/fail2ban:latest
-          platforms: linux/amd64, linux/arm64/v8, linux/arm/v7, linux/i386
-        
-      - name: Check if image has changed
-        id: check_image
-        run: |
-          docker pull binbashing/fail2ban:latest
-          docker pull localhost:5000/fail2ban:latest
-          PULLED_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' binbashing/fail2ban:latest)
-          BUILT_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' localhost:5000/fail2ban:latest)
-          echo "$BUILT_IMAGE_DIGEST"
-          echo "$PULLED_IMAGE_DIGEST"
-          if [ "$PULLED_IMAGE_DIGEST" = "$BUILT_IMAGE_DIGEST" ]; then
-            echo "Image has not change."
-            echo "::set-output name=match::true"
-          else
-            echo "Image has changed."
-            echo "::set-output name=match::false"
-          fi
 
       - name: Login to Docker Hub
         if: steps.check_image.outputs.match == 'false'
@@ -66,7 +28,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Tag Docker image latest
-        if: steps.check_image.outputs.match == 'false'
         run: docker tag localhost:5000/fail2ban:latest binbashing/fail2ban:latest
 
       - name: Build and push Docker image
