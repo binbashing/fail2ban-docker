@@ -33,7 +33,6 @@ jobs:
           tags: |
             binbashing/fail2ban:latest
           platforms: linux/amd64, linux/arm64/v8, linux/arm/v7, linux/i386
-          outputs: type=docker,artifacts=1
         
       - name: Check is image has changed
         id: check_image
