@@ -46,6 +46,8 @@ jobs:
           docker pull localhost:5000/fail2ban:latest
           PULLED_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' binbashing/fail2ban:latest)
           BUILT_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' localhost:5000/fail2ban:latest)
+          echo "$BUILT_IMAGE_DIGEST"
+          echo "$PULLED_IMAGE_DIGEST"
           if [ "$PULLED_IMAGE_DIGEST" = "$BUILT_IMAGE_DIGEST" ]; then
             echo "Image has not change."
             echo "::set-output name=match::true"
