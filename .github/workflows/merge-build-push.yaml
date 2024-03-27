@@ -11,8 +11,8 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     services:
-      registry:
-        image: registry:2
+      localhost:
+        image: localhost:2
         ports:
           - 5000:5000
  
@@ -37,7 +37,7 @@ jobs:
           file: ${{ matrix.config.dockerfile }}
           push: true
           tags: |
-              registry:5000/fail2ban:latest
+              localhost:5000/fail2ban:latest
           platforms: linux/amd64, linux/arm64/v8, linux/arm/v7, linux/i386
         
       - name: Check if image has changed
@@ -45,7 +45,7 @@ jobs:
         run: |
           docker pull binbashing/fail2ban:latest
           PULLED_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' binbashing/fail2ban:latest)
-          BUILT_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' registry:5000/fail2ban:latest)
+          BUILT_IMAGE_DIGEST=$(docker inspect --format='{{.RepoDigests}}' localhost:5000/fail2ban:latest)
           if [ "$PULLED_IMAGE_DIGEST" = "$BUILT_IMAGE_DIGEST" ]; then
             echo "Image has not change."
             echo "::set-output name=match::true"
@@ -56,7 +56,7 @@ jobs:
 
       - name: Tag Docker image latest
         if: steps.check_image.outputs.match == 'false'
-        run: docker tag registry:5000/fail2ban:latest binbashing/fail2ban:latest
+        run: docker tag localhost:5000/fail2ban:latest binbashing/fail2ban:latest
 
       - name: Build and push Docker image
         if: steps.check_image.outputs.match == 'false'
