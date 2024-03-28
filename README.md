@@ -1,7 +1,7 @@
 ![Build and Push](https://github.com/binbashing/fail2ban-docker/actions/workflows/build-push.yaml/badge.svg)
 # fail2ban-docker
 
-This repository contains a Dockerfile for creating a simple container based on Alpine Linux with Fail2Ban installed.
+A simple Docker container based on Alpine Linux with Fail2Ban installed.
 
 ## Usage
 
