@@ -1,7 +1,13 @@
 FROM alpine
 
-RUN apk update && \
-    apk upgrade && \
-    apk add fail2ban
+# Update and upgrade packages
+RUN apk update && apk upgrade
 
-ENTRYPOINT ["/usr/bin/fail2ban-server", "-f", "-x", "-v", "start" ]
+# Install fail2ban and moreutils
+RUN apk add fail2ban moreutils
+
+# Copy the entrypoint script into the image
+COPY entrypoint.sh /entrypoint.sh
+
+# Set the entrypoint for the container
+ENTRYPOINT ["/entrypoint.sh"]
