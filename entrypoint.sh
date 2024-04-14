@@ -9,14 +9,14 @@ handle_sigterm() {
 }
 
 # Setup SIGTERM handler
-trap handle_sigterm SIGTERM
+trap handle_sigterm TERM
 
 # Check if jail.local is provided and use it
 if [ -f "/jail.local" ]; then
     envsubst < /jail.local | sponge /etc/fail2ban/jail.local
 fi
 # Start Fail2Ban
-/usr/bin/fail2ban-server -f -x -v start
+/usr/bin/fail2ban-server -f -x -v start &
 
 # Keep script running to maintain control over the process and handle signals
 wait $!
