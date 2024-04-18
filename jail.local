@@ -14,7 +14,7 @@ destemail = admin@example.com
 ignoreip = 127.0.0.1/8
 
 # Set the backend used to store and retrieve data
-backend = auto
+backend = pyinotify
 
 # Set the protocol used for communication
 protocol = tcp

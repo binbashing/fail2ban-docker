@@ -4,7 +4,7 @@ FROM alpine
 RUN apk update && apk upgrade
 
 # Install fail2ban and moreutils
-RUN apk add fail2ban curl moreutils envsubst
+RUN apk add fail2ban py3-inotify curl moreutils envsubst
 
 # Set default values for environment variables
 ENV BANTIME=600
