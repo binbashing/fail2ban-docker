@@ -23,7 +23,7 @@ In this example, `access.log` is the log file that Fail2Ban will monitor, and `j
 Please replace /path/to/access.log and /path/to/jail.local with the actual paths to your access.log and jail.local files on your host machine.
 
 ### Environment Variables in jail.local
-You can use environment variables in your `jail.local` file. On container startup `envsubst` is used to replace instances of $VAR_NAME or ${VAR_NAME} in the file with the value of the corresponding environment variable.
+You can use environment variables in your `jail.local` file. On container startup `envsubst` is used to replace instances of `$VAR_NAME` or `${VAR_NAME}` in the file with the value of the corresponding environment variable.
 
 For example, if your jail.local file contains a line like this:
 
